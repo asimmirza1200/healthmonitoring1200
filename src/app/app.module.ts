@@ -38,6 +38,9 @@ import { AddPatientComponent } from './pages/add-patient/add-patient.component';
 import { ShowdoctorComponent } from './pages/showdoctor/showdoctor.component';
 import { AssigndoctorComponent } from './pages/assigndoctor/assigndoctor.component';
 import { LoginComponent } from './login/login.component';
+import { AssignpatientComponent } from './pages/assignpatient/assignpatient.component';
+import { SeeassignpatientsComponent } from './pages/seeassignpatients/seeassignpatients.component';
+import { SeeassigndoctorsComponent } from './pages/seeassigndoctors/seeassigndoctors.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +56,9 @@ import { LoginComponent } from './login/login.component';
     ShowdoctorComponent,
     AssigndoctorComponent,
     LoginComponent,
+    AssignpatientComponent,
+    SeeassignpatientsComponent,
+    SeeassigndoctorsComponent,
 
   ],
   imports: [

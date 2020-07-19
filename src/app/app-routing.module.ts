@@ -12,6 +12,9 @@ import { AddPatientComponent } from './pages/add-patient/add-patient.component';
 import { ShowdoctorComponent } from './pages/showdoctor/showdoctor.component';
 import { AssigndoctorComponent } from './pages/assigndoctor/assigndoctor.component';
 import { LoginComponent } from './login/login.component';
+import { AssignpatientComponent } from './pages/assignpatient/assignpatient.component';
+import { SeeassignpatientsComponent } from './pages/seeassignpatients/seeassignpatients.component';
+import { SeeassigndoctorsComponent } from './pages/seeassigndoctors/seeassigndoctors.component';
 
 const routes: Routes = [
   {
@@ -59,9 +62,26 @@ const routes: Routes = [
 }
 ,
 { 
+  path: "seeassignpatients",
+  component: SeeassignpatientsComponent,
+  data:{title:'See Assign Patients'}
+}
+,
+{ 
+  path: "seeassigndoctors",
+  component: SeeassigndoctorsComponent,
+  data:{title:'See Assign Doctors'}
+}
+,
+{ 
   path: "assigndoctor",
   component: AssigndoctorComponent,
   data:{title:'Assign Doctor'}
+},
+{ 
+  path: "assignpatient",
+  component: AssignpatientComponent,
+  data:{title:'Assign Patient'}
 }
 ,
   { 

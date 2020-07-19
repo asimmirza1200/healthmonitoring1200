@@ -15,9 +15,7 @@ import { DOCUMENT } from '@angular/common';
 export class DoctorlistComponent implements OnInit {
   public searchdoctor: string;
   public image="https://www.uidownload.com/files/802/144/19/vector-doctor-design-elements-set-thumb.jpg"
-  public doctors = [
-    
-  ];
+  public doctors;
   public static clicked=false;
 
   public density = "comfortable";
@@ -78,11 +76,16 @@ this.getDoctors()
     DoctorlistComponent.clicked=true
     //this._router.navigateByUrl('/doctorlist');
 
-    this.deleteDoctor({docotrId:doctor._id})
+    if(confirm("Are you sure to delete "+doctor.doctorname)) {
+      this.deleteDoctor({docotrId:doctor._id})
+    }else{
+      DoctorlistComponent.clicked=false
+
+    }
   }
-  public click() {
+  public click(doctor: any) {
     if(!DoctorlistComponent.clicked)
-        this._router.navigateByUrl('/showdoctor');
+        this._router.navigateByUrl('/showdoctor',{state: {doctor: doctor}});
 
   }
   get filterdoctors() {

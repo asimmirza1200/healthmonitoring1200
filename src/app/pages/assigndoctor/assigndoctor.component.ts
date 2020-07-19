@@ -1,52 +1,62 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject  } from '@angular/core';
 import { IgxToastComponent, IgxListComponent, IgxFilterOptions } from 'igniteui-angular';
-
+import {ApiService} from './api.service';
+import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 @Component({
   selector: 'app-assigndoctor',
   templateUrl: './assigndoctor.component.html',
   styleUrls: ['./assigndoctor.component.css']
 })
 export class AssigndoctorComponent implements OnInit {
-  public searchContact: string;
-
-  public contacts = [
-    {
-      isFavorite: false,
-      name: "Asim Mirza",
-      phone: "03438851054",
-      photo: "assets/IMG-20190401-WA0000.jpg"
-    },
-    {
-      isFavorite: false,
-      name: "Atif Mehmood",
-      phone: "423-676-2869",
-      photo: "https://www.infragistics.com/angular-demos/assets/images/men/1.jpg"
-    },
-    {
-      isFavorite: false,
-      name: "Haider Ali",
-      phone: "859-496-2817",
-      photo: "https://www.infragistics.com/angular-demos/assets/images/women/50.jpg"
-    },
-    {
-      isFavorite: false,
-      name: "Faisal Mehmood",
-      phone: "901-747-3428",
-      photo: "https://www.infragistics.com/angular-demos/assets/images/women/3.jpg"
-    },
-    {
-      isFavorite: false,
-      name: "Bilal Ahmed ",
-      phone: "573-394-9254",
-      photo: "https://www.infragistics.com/angular-demos/assets/images/women/67.jpg"
-    }
-  ];
+  public searchdoctor: string;
+  public image="https://www.uidownload.com/files/802/144/19/vector-doctor-design-elements-set-thumb.jpg"
+  public doctors;
 
   public density = "comfortable";
   public displayDensities;
+  patient: any;
+  assignDoctor(body) {
 
-  constructor() { }
+    this._apiService.assignDoctor(body).subscribe(
+       data => {
+        console.log(data);
+        this.document.location.reload();    
 
+         // refresh the list
+         return true;
+       },
+       error => {
+        alert('Error!! :-)\n\n' +error)
+
+         console.error(error);
+         return false;
+       }
+    );
+  }
+  getDoctors() {
+    this._apiService.getDoctors().subscribe(
+      // the first argument is a function which runs on success
+      data => { console.log("Data:"+data.response)   
+              this.doctors=data.response
+    },
+      // the second argument is a function which runs on error
+      err => console.error(err),
+      // the third argument is a function which runs on completion
+      () => console.log('done loading foods')
+    );
+  }
+
+ constructor(private _apiService: ApiService, private _router: Router, @Inject(DOCUMENT) private document: Document){
+  this. patient=history.state.patient;
+
+  if(this.patient==null){
+    this._router.navigateByUrl('/patientlist');
+
+  }
+this.getDoctors()
+ }
+ 
   public ngOnInit() {
 
      
@@ -62,14 +72,19 @@ export class AssigndoctorComponent implements OnInit {
     this.density = this.displayDensities[event.index].label;
   }
 
-  public toggleFavorite(contact: any) {
-    contact.isFavorite = !contact.isFavorite;
-  }
+  
+  public click(doctor: any) {
+    //this._router.navigateByUrl('/doctorlist');
 
-  get filterContacts() {
+    if(confirm("Are you sure to assign "+doctor.doctorname)) {
+      this.assignDoctor({doctor_id:doctor._id,patient_id:this.patient._id})
+    }
+  }
+  get filterdoctors() {
     const fo = new IgxFilterOptions();
-    fo.key = "name";
-    fo.inputValue = this.searchContact;
+    fo.key = "doctorname";
+
+    fo.inputValue = this.searchdoctor;
     return fo;
   }
 }

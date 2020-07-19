@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label,BaseChartDirective } from 'ng2-charts';
 import * as Chart from 'chart.js';
+import { Router } from '@angular/router';
+import { ApiService } from './api.service';
 @Component({
   selector: 'app-showpatient',
   templateUrl: './showpatient.component.html',
@@ -19,9 +21,71 @@ export class ShowpatientComponent implements OnInit {
   public clicked: boolean = true;
   public clicked1: boolean = false;
   public clicked2: boolean = false;
+  patient: any;
+  totaldoctors: any;
+  assigndoctors: any;
+  public toggleFavorite() {
+    // alert('Error!! :-)\n\n' )
+      if(confirm("Are you sure to delete "+this.patient._id)) {
+        this.deletePatient({patientId:this.patient._id})
+      }
+  }
+  public selectDoctor() {
+    this._router.navigateByUrl('/assigndoctor',{state: {patient: this.patient}});
 
-  constructor() {}
+  }
+  public seeAssignDoctors() {
+    this._router.navigateByUrl('/seeassigndoctors',{state: {doctors: this.assigndoctors}});
 
+  }
+  getAssignDoctor(body) {
+
+    this._apiService.getAssignDoctor(body).subscribe(
+       data => {
+        console.log(data);
+         this. totaldoctors=data.result.length>0?data.result.length:0
+         this.assigndoctors=data.result;
+         // refresh the list
+         return true;
+       },
+       error => {
+        alert('Error!! :-)\n\n' +error)
+
+         console.error(error);
+         return false;
+       }
+    );
+  }
+  deletePatient(body) {
+
+    this._apiService.deletePatient(body).subscribe(
+       data => {
+        console.log(data);
+           this._router.navigateByUrl('/patientlist');
+
+         // refresh the list
+         return true;
+       },
+       error => {
+        alert('Error!! :-)\n\n' +error)
+
+         console.error(error);
+         return false;
+       }
+    );
+  }
+  constructor( private _router: Router,private _apiService: ApiService){
+    this. patient=history.state.patient;
+    if(this.patient==null){
+      this._router.navigateByUrl('/patientlist');
+
+    }else{
+      this.getAssignDoctor({patient_id:this.patient._id})
+
+    }
+    // console.log(this.patient+"vcbvcbvcb")
+  }
+  
   ngOnInit() {
     var gradientChartOptionsConfigurationWithTooltipBlue: any = {
       maintainAspectRatio: false,
