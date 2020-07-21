@@ -35,7 +35,7 @@ export class ApiService {
     // send a POST request to the API to create a new data object
     createPatient(food) {
         let body = JSON.stringify(food);
-        return this.http.post('http://localhost:3000/insertPatient', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/insertPatient', body, httpOptions);
     }
 
     // send a PUT request to the API to update a data object

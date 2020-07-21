@@ -46,7 +46,7 @@ export class ApiService {
     // send a DELETE request to the API to delete a data object
     deletePatient(patient) {
         let body = JSON.stringify(patient);
-        return this.http.post('http://localhost:3000/deletePatient', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/deletePatient', body, httpOptions);
     }
 
 }

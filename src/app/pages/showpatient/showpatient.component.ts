@@ -4,12 +4,71 @@ import { Color, Label,BaseChartDirective } from 'ng2-charts';
 import * as Chart from 'chart.js';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from '@angular/fire/database';
+export const snapshotToArraydht = (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item.temp);
+  });
+
+  return returnArr;
+};
+export const snapshotToArrayecg= (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item.ecg);
+  });
+
+  return returnArr;
+};
+export const snapshotToArraybpm= (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item.BPM);
+  });
+
+  return returnArr;
+};
+export const snapshotToArray2 = (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item.time);
+  });
+
+  return returnArr;
+};
+export const snapshotToArray3 = (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item.Time);
+  });
+
+  return returnArr;
+};
 @Component({
   selector: 'app-showpatient',
   templateUrl: './showpatient.component.html',
   styleUrls: ['./showpatient.component.css']
 })
 export class ShowpatientComponent implements OnInit {
+
+  
+
   public canvas : any;
   public ctx1;
   public ctx3;
@@ -74,7 +133,7 @@ export class ShowpatientComponent implements OnInit {
        }
     );
   }
-  constructor( private _router: Router,private _apiService: ApiService){
+  constructor( private _router: Router,private _apiService: ApiService,private db: AngularFireDatabase){
     this. patient=history.state.patient;
     if(this.patient==null){
       this._router.navigateByUrl('/patientlist');
@@ -83,108 +142,114 @@ export class ShowpatientComponent implements OnInit {
       this.getAssignDoctor({patient_id:this.patient._id})
 
     }
+   
     // console.log(this.patient+"vcbvcbvcb")
   }
   
   ngOnInit() {
-    var gradientChartOptionsConfigurationWithTooltipBlue: any = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false
-      },
+    this.db.database.ref('sensor/dht/').on('value', resp => {
+      console.log(resp)
+      let sensordata=snapshotToArraydht(resp)
+      let sensordatalabel=snapshotToArray2(resp)
 
-      tooltips: {
-        backgroundColor: '#f5f5f5',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest"
-      },
-      responsive: true,
-      scales: {
-        yAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.0)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            suggestedMin: 60,
-            suggestedMax: 125,
-            padding: 20,
-            fontColor: "#2380f7"
-          }
-        }],
+      var gradientChartOptionsConfigurationWithTooltipRed: any = {
+        maintainAspectRatio: true,
+        legend: {
+          display: false
+        },
+  
+        tooltips: {
+          backgroundColor: '#f5f5f5',
+          titleFontColor: '#333',
+          bodyFontColor: '#666',
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest"
+        },
+        responsive: true,
+        scales: {
+          yAxes: [{
+            barPercentage: 0.6,
+            gridLines: {
+              drawBorder: false,
+              color: 'rgba(29,140,248,0.0)',
+              zeroLineColor: "rgba(29,140,248,0.0)",
+            },
+            ticks: {
+              suggestedMin: 60,
+              suggestedMax: 125,
+              padding: 20,
+              fontColor: "#9a9a9a"
+            }
+          }],
+  
+          xAxes: [{
+            barPercentage: 1.6,
+            gridLines: {
+              drawBorder: false,
+              color: 'rgba(233,32,16,0.1)',
+              zeroLineColor: "rgba(29,140,248,0.0)",
+            },
+            ticks: {
+              padding: 20,
+              fontColor: "#9a9a9a"
+            }
+          }]
+        }
+      };
+  
+  
 
-        xAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            padding: 20,
-            fontColor: "#2380f7"
-          }
+      this.canvas = document.getElementById("chartLineRed2");
+      this.ctx1 = this.canvas.getContext("2d");
+  
+      
+  
+      var gradientStroke = this.ctx1.createLinearGradient(0, 230, 0, 50);
+  
+      gradientStroke.addColorStop(1, 'rgba(233,32,16,0.2)');
+      gradientStroke.addColorStop(0.4, 'rgba(233,32,16,0.0)');
+      gradientStroke.addColorStop(0, 'rgba(233,32,16,0)'); //red colors
+  
+      var dhtdata = {
+        labels:sensordatalabel,
+        
+        datasets: [{
+          label: "readings",
+          fill: true,
+          backgroundColor: gradientStroke,
+          borderColor: '#ec250d',
+          borderWidth: 1,
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBackgroundColor: '#ec250d',
+          pointBorderColor: 'rgba(255,255,255,0)',
+          pointHoverBackgroundColor: '#ec250d',
+          pointBorderWidth: 20,
+          pointHoverRadius: 2,
+          pointHoverBorderWidth: 30,
+          pointRadius: 5,
+          data: sensordata,
         }]
-      }
-    };
-
-    var gradientChartOptionsConfigurationWithTooltipPurple: any = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false
-      },
-
-      tooltips: {
-        backgroundColor: '#f5f5f5',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest"
-      },
-      responsive: true,
-      scales: {
-        yAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.0)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            suggestedMin: 60,
-            suggestedMax: 125,
-            padding: 20,
-            fontColor: "#9a9a9a"
-          }
-        }],
-
-        xAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(225,78,202,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            padding: 20,
-            fontColor: "#9a9a9a"
-          }
-        }]
-      }
-    };
+      };
+  
+      this.myChartData = new Chart(this.ctx1, {
+        type: 'line',
+        data: dhtdata,
+        options: gradientChartOptionsConfigurationWithTooltipRed
+      });
+  
+     
+   });
+   this.db.database.ref('sensor/BMP/').on('value', resp => {
+    console.log(resp)
+    let sensordata=snapshotToArraybpm(resp)
+    let sensordatalabel=snapshotToArray3(resp)
 
     var gradientChartOptionsConfigurationWithTooltipRed: any = {
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       legend: {
         display: false
       },
@@ -202,11 +267,11 @@ export class ShowpatientComponent implements OnInit {
       responsive: true,
       scales: {
         yAxes: [{
-          barPercentage: 1.6,
+          barPercentage: 0.6,
           gridLines: {
             drawBorder: false,
             color: 'rgba(29,140,248,0.0)',
-            zeroLineColor: "transparent",
+            zeroLineColor: "rgba(29,140,248,0.0)",
           },
           ticks: {
             suggestedMin: 60,
@@ -221,7 +286,7 @@ export class ShowpatientComponent implements OnInit {
           gridLines: {
             drawBorder: false,
             color: 'rgba(233,32,16,0.1)',
-            zeroLineColor: "transparent",
+            zeroLineColor: "rgba(29,140,248,0.0)",
           },
           ticks: {
             padding: 20,
@@ -231,205 +296,148 @@ export class ShowpatientComponent implements OnInit {
       }
     };
 
-    var gradientChartOptionsConfigurationWithTooltipOrange: any = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false
-      },
 
-      tooltips: {
-        backgroundColor: '#f5f5f5',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest"
-      },
-      responsive: true,
-      scales: {
-        yAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.0)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            suggestedMin: 50,
-            suggestedMax: 110,
-            padding: 20,
-            fontColor: "#ff8a76"
-          }
-        }],
-
-        xAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(220,53,69,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            padding: 20,
-            fontColor: "#ff8a76"
-          }
-        }]
-      }
-    };
-
-    var gradientChartOptionsConfigurationWithTooltipGreen: any = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false
-      },
-
-      tooltips: {
-        backgroundColor: '#f5f5f5',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest"
-      },
-      responsive: true,
-      scales: {
-        yAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.0)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            suggestedMin: 50,
-            suggestedMax: 125,
-            padding: 20,
-            fontColor: "#9e9e9e"
-          }
-        }],
-
-        xAxes: [{
-          barPercentage: 1.6,
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(0,242,195,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            padding: 20,
-            fontColor: "#9e9e9e"
-          }
-        }]
-      }
-    };
-
-
-    var gradientBarChartConfiguration: any = {
-      maintainAspectRatio: false,
-      legend: {
-        display: false
-      },
-
-      tooltips: {
-        backgroundColor: '#f5f5f5',
-        titleFontColor: '#333',
-        bodyFontColor: '#666',
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest"
-      },
-      responsive: true,
-      scales: {
-        yAxes: [{
-
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            suggestedMin: 60,
-            suggestedMax: 120,
-            padding: 20,
-            fontColor: "#9e9e9e"
-          }
-        }],
-
-        xAxes: [{
-
-          gridLines: {
-            drawBorder: false,
-            color: 'rgba(29,140,248,0.1)',
-            zeroLineColor: "transparent",
-          },
-          ticks: {
-            padding: 20,
-            fontColor: "#9e9e9e"
-          }
-        }]
-      }
-    };
 
     this.canvas = document.getElementById("chartLineRed1");
-    this.ctx1 = this.canvas.getContext("2d");
-
-    this.canvas = document.getElementById("chartLineRed2");
     this.ctx2 = this.canvas.getContext("2d");
 
-    this.canvas = document.getElementById("chartLineRed3");
-    this.ctx3 = this.canvas.getContext("2d");
+    
 
-    var gradientStroke = this.ctx1.createLinearGradient(0, 230, 0, 50);
+    var gradientStroke = this.ctx2.createLinearGradient(0, 230, 0, 50);
 
     gradientStroke.addColorStop(1, 'rgba(233,32,16,0.2)');
     gradientStroke.addColorStop(0.4, 'rgba(233,32,16,0.0)');
     gradientStroke.addColorStop(0, 'rgba(233,32,16,0)'); //red colors
 
-    var data = {
-      labels: ["80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80","80", "100", "70", "80", "120", "80"],
+    var bpmdata = {
+      labels:sensordatalabel,
       
       datasets: [{
-        label: "Toatal Patients",
+        label: "readings",
         fill: true,
         backgroundColor: gradientStroke,
         borderColor: '#ec250d',
-        borderWidth: 2,
+        borderWidth: 1,
         borderDash: [],
-        
         borderDashOffset: 0.0,
         pointBackgroundColor: '#ec250d',
         pointBorderColor: 'rgba(255,255,255,0)',
         pointHoverBackgroundColor: '#ec250d',
         pointBorderWidth: 20,
-        pointHoverRadius: 4,
-        pointHoverBorderWidth: 15,
-        pointRadius: 4,
-        data: [80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80,80, 100, 70, 80, 120, 80],
+        pointHoverRadius: 2,
+        pointHoverBorderWidth: 30,
+        pointRadius: 5,
+        data: sensordata,
       }]
     };
 
-    this.myChartData = new Chart(this.ctx1, {
+    var myChart = new Chart(this.ctx2, {
       type: 'line',
-      data: data,
+      data: bpmdata,
       options: gradientChartOptionsConfigurationWithTooltipRed
     });
 
-    var myChart = new Chart(this.ctx2, {
-      type: 'line',
-      data: data,
-      options: gradientChartOptionsConfigurationWithTooltipRed
-    });
-    var myChart = new Chart(this.ctx3, {
-      type: 'line',
-      data: data,
-      options: gradientChartOptionsConfigurationWithTooltipRed
-    });
+   
+ });
+
+ this.db.database.ref('sensor/ecg/').on('value', resp => {
+  console.log(snapshotToArrayecg(resp))
+  let sensordata=snapshotToArrayecg(resp)
+  let sensordatalabel=snapshotToArray2(resp)
+
+  var gradientChartOptionsConfigurationWithTooltipRed: any = {
+    maintainAspectRatio: true,
+    legend: {
+      display: false
+    },
+
+    tooltips: {
+      backgroundColor: '#f5f5f5',
+      titleFontColor: '#333',
+      bodyFontColor: '#666',
+      bodySpacing: 4,
+      xPadding: 12,
+      mode: "nearest",
+      intersect: 0,
+      position: "nearest"
+    },
+    responsive: true,
+    scales: {
+      yAxes: [{
+        barPercentage: 0.6,
+        gridLines: {
+          drawBorder: false,
+          color: 'rgba(29,140,248,0.0)',
+          zeroLineColor: "rgba(29,140,248,0.0)",
+        },
+        ticks: {
+          suggestedMin: 60,
+          suggestedMax: 125,
+          padding: 20,
+          fontColor: "#9a9a9a"
+        }
+      }],
+
+      xAxes: [{
+        barPercentage: 1.6,
+        gridLines: {
+          drawBorder: false,
+          color: 'rgba(233,32,16,0.1)',
+          zeroLineColor: "rgba(29,140,248,0.0)",
+        },
+        ticks: {
+          padding: 20,
+          fontColor: "#9a9a9a"
+        }
+      }]
+    }
+  };
+
+
+
+  
+  this.canvas = document.getElementById("chartLineRed3");
+  this.ctx3 = this.canvas.getContext("2d");
+
+  
+
+  var gradientStroke = this.ctx3.createLinearGradient(0, 230, 0, 50);
+
+  gradientStroke.addColorStop(1, 'rgba(233,32,16,0.2)');
+  gradientStroke.addColorStop(0.4, 'rgba(233,32,16,0.0)');
+  gradientStroke.addColorStop(0, 'rgba(233,32,16,0)'); //red colors
+
+  var ecgdata = {
+    labels:sensordatalabel,
+    
+    datasets: [{
+      label: "readings",
+      fill: true,
+      backgroundColor: gradientStroke,
+      borderColor: '#ec250d',
+      borderWidth: 1,
+      borderDash: [],
+      borderDashOffset: 0.0,
+      pointBackgroundColor: '#ec250d',
+      pointBorderColor: 'rgba(255,255,255,0)',
+      pointHoverBackgroundColor: '#ec250d',
+      pointBorderWidth: 20,
+      pointHoverRadius: 2,
+      pointHoverBorderWidth: 30,
+      pointRadius: 5,
+      data: sensordata,
+    }]
+  };
+
+  var myChart = new Chart(this.ctx3, {
+    type: 'line',
+    data: ecgdata,
+    options: gradientChartOptionsConfigurationWithTooltipRed
+  });
+
+ 
+});
+
 
 
   }

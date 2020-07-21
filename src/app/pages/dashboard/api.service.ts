@@ -19,7 +19,7 @@ export class ApiService {
 
     // Uses http.get() to load data from a single API endpoint
     getDashboardData() {
-        return this.http.get('http://localhost:3000/getDashboardData');
+        return this.http.get('https://healthmonitoring1200.herokuapp.com/getDashboardData');
     }
 
 

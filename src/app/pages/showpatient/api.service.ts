@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type':'application/x-www-form-urlencoded' })
 };
@@ -23,7 +24,7 @@ export class ApiService {
     }
     getAssignDoctor(patient) {
         let body = JSON.stringify(patient);
-        return this.http.post('http://localhost:3000/getAssignDoctor', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/getAssignDoctor', body, httpOptions);
     }
   
     // Uses Observable.forkJoin() to run multiple concurrent http.get() requests.
@@ -50,7 +51,7 @@ export class ApiService {
     // send a DELETE request to the API to delete a data object
     deletePatient(patient) {
         let body = JSON.stringify(patient);
-        return this.http.post('http://localhost:3000/deletePatient', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/deletePatient', body, httpOptions);
     }
 
 }

@@ -23,7 +23,7 @@ export class ApiService {
     }
     getAssignPatient(doctor) {
         let body = JSON.stringify(doctor);
-        return this.http.post('http://localhost:3000/getAssignPatient', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/getAssignPatient', body, httpOptions);
     }
     // Uses Observable.forkJoin() to run multiple concurrent http.get() requests.
     // The entire operation will result in an error state if any single request fails.
@@ -49,7 +49,7 @@ export class ApiService {
     // send a DELETE request to the API to delete a data object
     deleteDoctor(doctor) {
         let body = JSON.stringify(doctor);
-        return this.http.post('http://localhost:3000/deleteDoctor', body, httpOptions);
+        return this.http.post('https://healthmonitoring1200.herokuapp.com/deleteDoctor', body, httpOptions);
     }
 
 }

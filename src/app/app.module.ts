@@ -2,7 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule }    from '@angular/common/http';
-
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { NavMainComponent } from './nav-main/nav-main.component';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -83,7 +85,8 @@ import { SeeassigndoctorsComponent } from './pages/seeassigndoctors/seeassigndoc
     ChartsModule,
     ReactiveFormsModule,
     HttpClientModule,
-
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireDatabaseModule
 
   ],
   exports: [RouterModule],
