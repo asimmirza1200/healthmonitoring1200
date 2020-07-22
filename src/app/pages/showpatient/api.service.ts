@@ -22,6 +22,10 @@ export class ApiService {
     getPatients() {
         return this.http.get('https://healthmonitoring1200.herokuapp.com/getAllPatient');
     }
+    getAddresses(lat,lng) {
+        console.log('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&key=AIzaSyBEJAb_ZUVwypgkpVH6WumOB4fwtx2478c')
+        return this.http.get('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&key=AIzaSyBEJAb_ZUVwypgkpVH6WumOB4fwtx2478c');
+    }
     getAssignDoctor(patient) {
         let body = JSON.stringify(patient);
         return this.http.post('https://healthmonitoring1200.herokuapp.com/getAssignDoctor', body, httpOptions);

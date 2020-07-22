@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef ,OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label,BaseChartDirective } from 'ng2-charts';
 import * as Chart from 'chart.js';
@@ -14,7 +14,18 @@ export const snapshotToArraydht = (snapshot: any) => {
       returnArr.push(item.temp);
   });
 
-  return returnArr;
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
+};
+export const snapshotToArraygps = (snapshot: any) => {
+  const returnArr = [];
+
+  snapshot.forEach((childSnapshot: any) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item);
+  });
+
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
 };
 export const snapshotToArrayecg= (snapshot: any) => {
   const returnArr = [];
@@ -25,7 +36,7 @@ export const snapshotToArrayecg= (snapshot: any) => {
       returnArr.push(item.ecg);
   });
 
-  return returnArr;
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
 };
 export const snapshotToArraybpm= (snapshot: any) => {
   const returnArr = [];
@@ -36,7 +47,7 @@ export const snapshotToArraybpm= (snapshot: any) => {
       returnArr.push(item.BPM);
   });
 
-  return returnArr;
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
 };
 export const snapshotToArray2 = (snapshot: any) => {
   const returnArr = [];
@@ -47,7 +58,7 @@ export const snapshotToArray2 = (snapshot: any) => {
       returnArr.push(item.time);
   });
 
-  return returnArr;
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
 };
 export const snapshotToArray3 = (snapshot: any) => {
   const returnArr = [];
@@ -58,7 +69,7 @@ export const snapshotToArray3 = (snapshot: any) => {
       returnArr.push(item.Time);
   });
 
-  return returnArr;
+  return returnArr.slice(Math.max(returnArr.length - 30, 1));
 };
 @Component({
   selector: 'app-showpatient',
@@ -83,6 +94,7 @@ export class ShowpatientComponent implements OnInit {
   patient: any;
   totaldoctors: any;
   assigndoctors: any;
+  addresses: any;
   public toggleFavorite() {
     // alert('Error!! :-)\n\n' )
       if(confirm("Are you sure to delete "+this.patient._id)) {
@@ -97,6 +109,7 @@ export class ShowpatientComponent implements OnInit {
     this._router.navigateByUrl('/seeassigndoctors',{state: {doctors: this.assigndoctors}});
 
   }
+
   getAssignDoctor(body) {
 
     this._apiService.getAssignDoctor(body).subscribe(
@@ -104,6 +117,25 @@ export class ShowpatientComponent implements OnInit {
         console.log(data);
          this. totaldoctors=data.result.length>0?data.result.length:0
          this.assigndoctors=data.result;
+         // refresh the list
+         return true;
+       },
+       error => {
+        alert('Error!! :-)\n\n' +error)
+
+         console.error(error);
+         return false;
+       }
+    );
+  }
+  getAddresses(lat,lng) {
+
+    this._apiService.getAddresses(lat,lng).subscribe(
+       data => {
+         this.addresses=data.results[0].formatted_address;
+         console.log(this.addresses);
+         this.ref.detectChanges();
+
          // refresh the list
          return true;
        },
@@ -133,7 +165,7 @@ export class ShowpatientComponent implements OnInit {
        }
     );
   }
-  constructor( private _router: Router,private _apiService: ApiService,private db: AngularFireDatabase){
+  constructor( private ref: ChangeDetectorRef,private _router: Router,private _apiService: ApiService,private db: AngularFireDatabase){
     this. patient=history.state.patient;
     if(this.patient==null){
       this._router.navigateByUrl('/patientlist');
@@ -147,6 +179,11 @@ export class ShowpatientComponent implements OnInit {
   }
   
   ngOnInit() {
+    this.db.database.ref('sensor/gps/').on('value', resp => {
+      console.log(snapshotToArraygps(resp))
+      let sensordata=snapshotToArraygps(resp)
+      this.getAddresses(sensordata[sensordata.length-1].Latitude,sensordata[sensordata.length-1].Longitude)      
+   });
     this.db.database.ref('sensor/dht/').on('value', resp => {
       console.log(resp)
       let sensordata=snapshotToArraydht(resp)
@@ -171,7 +208,7 @@ export class ShowpatientComponent implements OnInit {
         responsive: true,
         scales: {
           yAxes: [{
-            barPercentage: 0.6,
+            barPercentage: 5.0,
             gridLines: {
               drawBorder: false,
               color: 'rgba(29,140,248,0.0)',
