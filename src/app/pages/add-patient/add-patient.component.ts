@@ -11,7 +11,12 @@ export class AddPatientComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder,private _apiService: ApiService, private _router: Router) { }
+  constructor(private formBuilder: FormBuilder,private _apiService: ApiService, private _router: Router) { 
+    if(localStorage.getItem('isloggedin')!="yes"){
+      this._router.navigateByUrl('/login');
+    
+     }
+  }
 
   ngOnInit() {
       this.registerForm = this.formBuilder.group({

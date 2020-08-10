@@ -12,7 +12,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class NavMainComponent {
   public href: string = "";
 
-  
+  logout(){
+    localStorage.removeItem('isloggedin')
+    this.router.navigateByUrl('/login');
+
+  }
     constructor(private router: Router) {}
 
     ngOnInit() {

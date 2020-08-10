@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {ApiService} from './api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,11 +12,11 @@ export class LoginComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private _apiService: ApiService, private _router: Router,private formBuilder: FormBuilder) { }
 
   ngOnInit() {
       this.registerForm = this.formBuilder.group({
-          phone: ['', [Validators.required, Validators.minLength(11)]],
+          email: ['', [Validators.required, Validators.minLength(11)]],
           password: ['', [Validators.required, Validators.minLength(6)]],
 
       });
@@ -30,7 +32,28 @@ export class LoginComponent implements OnInit {
       if (this.registerForm.invalid) {
           return;
       }
+      this.registerForm.value.token=localStorage.getItem('token')
+     // alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value))
+    this.loginAdmin(this.registerForm.value)
+  }
 
-      alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value))
+  loginAdmin(body) {
+
+    this._apiService.loginAdmin(body).subscribe(
+       data => {
+        console.log(data);
+        localStorage.setItem('isloggedin', "yes");
+        this._router.navigateByUrl('/dashboard');
+
+         // refresh the list
+         return true;
+       },
+       error => {
+        alert('Error!! :-)\n\n' +error)
+
+         console.error(error);
+         return false;
+       }
+    );
   }
 }

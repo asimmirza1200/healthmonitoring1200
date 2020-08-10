@@ -22,7 +22,8 @@ import { AppRoutingModule } from "./app-routing.module";
  import { DoctorlistComponent } from './pages/doctorlist/doctorlist.component';
  import { FormsModule } from '@angular/forms';
  import { ReactiveFormsModule } from '@angular/forms';
-
+ import{AngularFireMessagingModule}from'@angular/fire/messaging'; 
+ import { AsyncPipe } from '@angular/common';
 
  import { 
 	IgxAvatarModule,
@@ -43,6 +44,8 @@ import { LoginComponent } from './login/login.component';
 import { AssignpatientComponent } from './pages/assignpatient/assignpatient.component';
 import { SeeassignpatientsComponent } from './pages/seeassignpatients/seeassignpatients.component';
 import { SeeassigndoctorsComponent } from './pages/seeassigndoctors/seeassigndoctors.component';
+import { MessagingService } from './shared/messaging.service';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -86,11 +89,13 @@ import { SeeassigndoctorsComponent } from './pages/seeassigndoctors/seeassigndoc
     ReactiveFormsModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    AngularFireMessagingModule,
+    ToastrModule.forRoot()
 
   ],
   exports: [RouterModule],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [MessagingService,AsyncPipe],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

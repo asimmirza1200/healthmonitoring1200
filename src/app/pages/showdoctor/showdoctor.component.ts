@@ -12,6 +12,7 @@ export class ShowdoctorComponent implements OnInit {
   doctor:any;
   totalpatients: number;
   assignpatients: any;
+  doctors: any;
   ngOnInit(): void {
   
 
@@ -80,6 +81,10 @@ export class ShowdoctorComponent implements OnInit {
 
   }
   constructor( private _router: Router,private _apiService: ApiService){
+    if(localStorage.getItem('isloggedin')!="yes"){
+      this._router.navigateByUrl('/login');
+    
+     }
     this. doctor=history.state.doctor;
     if(this.doctor==null){
       this._router.navigateByUrl('/doctorlist');
@@ -88,7 +93,8 @@ export class ShowdoctorComponent implements OnInit {
       this.getAssignPatient({doctor_id:this.doctor._id})
 
     }
-    // console.log(this.doctor+"vcbvcbvcb")
+    
+    console.log(this.doctor)
   }
   
 }

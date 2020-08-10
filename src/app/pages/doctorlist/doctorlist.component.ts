@@ -55,7 +55,13 @@ export class DoctorlistComponent implements OnInit {
 
  constructor(private _apiService: ApiService, private _router: Router, @Inject(DOCUMENT) private document: Document){
 this.getDoctors()
+console.log(localStorage.getItem('isloggedin'))
+
+if(localStorage.getItem('isloggedin')!="yes"){
+  this._router.navigateByUrl('/login');
+
  }
+}
  
   public ngOnInit() {
 

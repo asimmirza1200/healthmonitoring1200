@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {ApiService} from './api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,8 +27,12 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  constructor(private _apiService: ApiService) { 
+  constructor(private _apiService: ApiService,private _router: Router) { 
 this.getDoctors()
+if(localStorage.getItem('isloggedin')!="yes"){
+  this._router.navigateByUrl('/login');
+
+ }
   }
 
   ngOnInit(): void {

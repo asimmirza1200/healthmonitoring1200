@@ -11,7 +11,7 @@ import { DOCUMENT } from '@angular/common';
 export class SeeassigndoctorsComponent implements OnInit {
 
   public searchdoctor: string;
-  public image="https://i.pinimg.com/originals/17/91/2d/17912d51f20769919ecce69a17db976f.png"
+  public image="https://www.uidownload.com/files/802/144/19/vector-doctor-design-elements-set-thumb.jpg"
   public doctors;
   public static clicked=false;
 
@@ -22,12 +22,15 @@ export class SeeassigndoctorsComponent implements OnInit {
 
  constructor( private _router: Router, @Inject(DOCUMENT) private document: Document){
   this. doctors=history.state.doctors;
-
+  if(localStorage.getItem('isloggedin')!="yes"){
+    this._router.navigateByUrl('/login');
+  
+   }
   if(this.doctors==null){
     this._router.navigateByUrl('/patientlist');
 
   }
-  console.log(this.doctors)
+  console.log(this.doctors+"gfgfgh")
 
 }
  
@@ -49,7 +52,7 @@ export class SeeassigndoctorsComponent implements OnInit {
   
   public click(doctor: any) {
     if(!SeeassigndoctorsComponent.clicked)
-        this._router.navigateByUrl('/showdoctor',{state: {doctor: doctor}});
+        this._router.navigateByUrl('/showdoctor',{state: {doctor: doctor.DoctorData}});
 
   }
   get filterdoctors() {

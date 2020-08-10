@@ -47,7 +47,7 @@ export class SeeassignpatientsComponent implements OnInit {
   
   public click(patient: any) {
     if(!SeeassignpatientsComponent.clicked)
-        this._router.navigateByUrl('/showpatient',{state: {patient: patient}});
+        this._router.navigateByUrl('/showpatient',{state: {patient: patient.PatientData}});
 
   }
   get filterpatients() {

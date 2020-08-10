@@ -49,7 +49,10 @@ export class AssigndoctorComponent implements OnInit {
 
  constructor(private _apiService: ApiService, private _router: Router, @Inject(DOCUMENT) private document: Document){
   this. patient=history.state.patient;
-
+  if(localStorage.getItem('isloggedin')!="yes"){
+    this._router.navigateByUrl('/login');
+  
+   }
   if(this.patient==null){
     this._router.navigateByUrl('/patientlist');
 
